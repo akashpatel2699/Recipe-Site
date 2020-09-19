@@ -1,0 +1,5 @@
+#Project Requirements that can be install using following command: pip -r requirements.txt
+python-dotenv 
+flask
+tweepy
+requests 
