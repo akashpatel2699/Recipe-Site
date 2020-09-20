@@ -1,11 +1,27 @@
 {% extends "layout.html" %}
 {% block body %}
     <div class="container">
+        <div class="form">
+            <form action="/" method="post">
+                <input id="food_name" type="text" name="food_name" placeholder="Enter your food item here..."/>
+                <input id="submit" type="submit" disabled>
+            </form>
+        </div>
         <div class="food-name">
             <h1>{{ food_name }}</h1>
         </div>
         <div class="tweet-section">
-            <p>{{tweet.text}}<br>{{tweet.user.name}}<br>{{tweet.created_at}}</p>
+            <blockquote>{{tweet['text']}}<i><span>{{tweet['user']['name']}}</span>{{tweet['created_at']}}</i></blockquote>
         </div>
     </div>
+    
+    <script>
+        document.querySelector("#food_name").onkeyup = function(){
+            if (document.querySelector("#food_name").value === ''){
+                document.querySelector("#submit").disabled = true;
+            }else{
+                document.querySelector("#submit").disabled = false;
+            }
+        }
+    </script>
 {% endblock %}
