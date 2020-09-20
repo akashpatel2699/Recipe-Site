@@ -80,17 +80,29 @@ def twitter_search_request(querry):
     tweet['created_at'] = strftime("%a, %d %b %H:%M:%S %Y",strptime(tweet['created_at'],"%a %b %d %H:%M:%S +0000 %Y"))
     return tweet
 
-def spooncular_receipe_request(query):
+def spooncular_request_recipe_id(id):
+    base_url="https://api.spoonacular.com/recipes/{}/information".format(id)
+    payload = {
+        'apiKey': spoonacular_api_key,
+        'includeNutritio': False
+    }
+    search_result = requests.get(base_url,params=payload)
+    recipes = search_result.json()
+    return recipes
+    
+def spooncular_recipe_request(query):
     base_url="https://api.spoonacular.com/recipes/complexSearch"
     payload = {
         'apiKey': spoonacular_api_key,
         'query': query,
         'instructionsRequire': True,
+        'titleMatch': query,
         'number': 1
     }
     search_result = requests.get(base_url,params=payload)
-    search_result = search_result.json()
-    print(search_result)
+    
+    recipe_id = search_result.json()['results'][0]['id']
+    return spooncular_request_recipe_id(recipe_id)
    
 
 ITEMS = 20
@@ -98,9 +110,11 @@ ITEMS = 20
 def index():
     if request.method == "POST":
         food_name=request.form.get("food_name")
-        print(food_name)
         tweet = twitter_search_request(food_name)
-        spooncular_receipe_request(food_name)
+        recipe = spooncular_recipe_request(food_name)
+        f = open("recipe_result.txt", "a")
+        f.write(str(recipe))
+        f.close()
         return render_template("index.html",food_name=food_name,tweet=tweet)
     else:
         food_name = food_items[random.randint(0,len(food_items)-1)]
