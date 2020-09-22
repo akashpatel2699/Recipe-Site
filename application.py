@@ -1,27 +1,29 @@
-from flask import Flask, render_template, request
 import os
 import random
-from dotenv import load_dotenv
 import base64
 import requests
+from dotenv import load_dotenv
+from os.path import join, dirname
 from time import strftime, strptime
+from flask import Flask, render_template, request
 
 #Load all environments variables 
 # set as system variables
-load_dotenv()
+twitter_env = join(dirname(__file__),'twitter.env')
+load_dotenv(twitter_env)
 
 app=Flask(__name__)
 
-consumer_key=os.environ['consumer_key']
-consumer_secret=os.environ['consumer_secret']
+twitter_consumer_key=os.environ['consumer_key']
+twitter_consumer_secret=os.environ['consumer_secret']
 
 # base64 Encoding of two key into one for Twitter API Authentication
-key_secret = '{}:{}'.format(consumer_key, consumer_secret).encode('ascii')
+key_secret = '{}:{}'.format(twitter_consumer_key, twitter_consumer_secret).encode('ascii')
 b64_encoded_key = base64.b64encode(key_secret)
 b64_encoded_key = b64_encoded_key.decode('ascii')
 
-base_url = 'https://api.twitter.com/'
-auth_url = '{}oauth2/token'.format(base_url)
+twitter_base_url = 'https://api.twitter.com/'
+auth_url = '{}oauth2/token'.format(twitter_base_url)
 
 auth_headers = {
     'Authorization': 'Basic {}'.format(b64_encoded_key),
@@ -34,6 +36,7 @@ auth_data = {
 # POST request to obtain Bearer Token (acces key)
 auth_resp = requests.post(auth_url, headers=auth_headers, data=auth_data)
 
+# Access Token recieved back from authentication response
 access_token = auth_resp.json()['access_token']
 
 food_items = [
@@ -48,8 +51,6 @@ food_items = [
 
 def twitter_search_request(querry):
     COUNT = 20
-    random_food_index = random.randint(0,len(food_items)-1)
-    random_tweet_index = random.randint(0,COUNT-1)
     #Search Query to be send to fetch some data from Twitter API endpoint
     search_headers = {
         'Authorization': 'Bearer {}'.format(access_token)    
@@ -62,22 +63,19 @@ def twitter_search_request(querry):
         'count': COUNT
     }
     
-    search_url = '{}1.1/search/tweets.json'.format(base_url)
+    search_url = '{}1.1/search/tweets.json'.format(twitter_base_url)
     
     search_resp = requests.get(search_url, headers=search_headers, params=search_params)
     
     tweet_data = search_resp.json()
     
-    for status in tweet_data['statuses']:
-        if (random_tweet_index) == random_food_index:
-            tweet = status
-            break
-        elif random_tweet_index < random_food_index:
-            random_tweet_index += 1
-        else:
-            random_tweet_index -= 1
+    #select random tweet from fetched tweets
+    tweet = random.choice(tweet_data['statuses'])
+   
+    #format datetime to remove +000 from it
     tweet['created_at'] = strftime("%a, %d %b %H:%M:%S %Y",strptime(tweet['created_at'],"%a %b %d %H:%M:%S +0000 %Y"))
-    return tweet
+    
+    return {'text':tweet['text'],'screen_name':tweet['user']['screen_name'],'created_at':tweet['created_at']}
 
 @app.route("/")
 def index():

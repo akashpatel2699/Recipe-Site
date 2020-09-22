@@ -6,13 +6,13 @@ body {
 }
 .container {
   display: flex;
-  family-font: Georgia, serif;
+  family-font: Georgia, serif,Arial;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
   width: 100vw;
-  background-color: #000000;
+  background-color: #3D9970;
   overflow: hidden;
 }
 .food-name {
@@ -20,11 +20,43 @@ body {
     font-style: oblique;
     font-size: 2rem;
 }
-  
+
 .tweet-section {
-  max-width: 40%;
-  height: auto;
-  min-width: 40px;
-  color: #ffffff;
-  background-color: #92a8d1;
+    overflow: hidden;
+    padding: 1rem;
+    color: #FF4136;
+    height: auto;
+    max-width: 40%;
+    border-radius: 10%;
+    background-color: #001f3f;
+    box-shadow: 0 8px 6px -6px black
+}
+.tweet-section > p {
+    font-family: "Comic Sans MS", "Times New Roman";
+    font-size: 1.2rem;
+}
+
+span.username {
+    display: block;
+    margin-top: 1rem;
+    font-family: "Comic Sans", serif;
+    font-size: 1em;
+}
+.date {
+    font-family: "Comic Sans", serif;
+    float: right;
+}
+
+@media only screen and (max-width: 300px) {
+  .food-name {
+    font-size: 1rem;
+  }
+  .tweet-section {
+      font-size: 1rem;
+      min-width: 100vw;
+  }
+  .date {
+      margin-top: 0.8rem;
+      float: left;
+  }
 }

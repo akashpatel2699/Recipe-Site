@@ -5,7 +5,7 @@
             <h1>{{ food_name }}</h1>
         </div>
         <div class="tweet-section">
-            <p>{{tweet.text}}<br>{{tweet.user.name}}<br>{{tweet.created_at}}</p>
+            <p>{{tweet.text}}<span class="username">{{tweet.screen_name}}<span class="date">{{tweet.created_at}}</span></span></p>
         </div>
     </div>
 {% endblock %}
