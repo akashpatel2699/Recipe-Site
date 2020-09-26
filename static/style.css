@@ -5,58 +5,126 @@ body {
     margin: 0;
 }
 .container {
-  display: flex;
-  family-font: Georgia, serif,Arial;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  family-font: Georgia, serif;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto 1fr;
+  justify-content:center;
+  grid-template-areas:
+  "search search"
+  "food_name food_name"
+  "food_info tweet_section";
   height: 100vh;
   width: 100vw;
-  background-color: #3D9970;
+  background-color: #000000;
   overflow: hidden;
 }
+ul {
+  color: #ffffff;
+  font-size: 2rem;
+}
 .food-name {
-    color: #ffffff;
-    font-style: oblique;
-    font-size: 2rem;
+  grid-area: food_name;
+  color: #ffffff;
+  font-style: oblique;
+  font-size: 2rem;
 }
 
+.form {
+  grid-area: search;
+	position:relative;
+	margin:25px 0;
+}
+.food_recipe {
+  grid-area: food_info;
+  display: flex;
+  color: #ffffff;
+}
+
+.user_input label{
+	position:absolute;
+	top:0px;
+	left:0px;
+	font-size:2rem;
+	color:#fff;	
+  pointer-event:none;
+	transition: all 0.5s ease-in-out;
+}
+.user_input input{ 
+  border:0;
+  border-bottom:1px solid #555;  
+  background:transparent;
+  width:100%;
+  padding:8px 0 5px 0;
+  font-size:16px;
+  color:#fff;
+}
+.user_input input:focus{ 
+ border:none;	
+ outline:none;
+ border-bottom:1px solid #e74c3c;	
+}
+.user_input input[type="submit"]{
+	color:#fff;
+	background-color:#e74c3c;
+	outline: none;
+  border: 0;
+  color: #fff;
+	padding:10px 20px;
+	text-transform:uppercase;
+	margin-top:50px;
+	border-radius:2px;
+	/*cursor:pointer;*/
+	position:relative;
+}
+.user_input input:focus ~ label,
+.user_input input:valid ~ label{
+	top:-12px;
+	font-size:12px;	
+}
+  
 .tweet-section {
-    overflow: hidden;
-    padding: 1rem;
-    color: #FF4136;
-    height: auto;
-    max-width: 40%;
-    border-radius: 10%;
-    background-color: #001f3f;
-    box-shadow: 0 8px 6px -6px black
-}
-.tweet-section > p {
-    font-family: "Comic Sans MS", "Times New Roman";
-    font-size: 1.2rem;
+  grid-area: tweet_section;
+  width: 100%;
+  height: auto;
+  min-width: 40px;
 }
 
-span.username {
-    display: block;
-    margin-top: 1rem;
-    font-family: "Comic Sans", serif;
-    font-size: 1em;
-}
-.date {
-    font-family: "Comic Sans", serif;
-    float: right;
+blockquote {
+  min-height: 5em;
+  padding   : 1em 4em;
+  margin: 0;
+  font      : 1em/150% sans-serif;
+  position  : relative;
+  background-color: lightgoldenrodyellow;
 }
 
-@media only screen and (max-width: 300px) {
-  .food-name {
-    font-size: 1rem;
-  }
-  .tweet-section {
-      font-size: 1rem;
-      min-width: 100vw;
-  }
-  .date {
-      margin-top: 0.8rem;
-      float: left;
-  }
+blockquote::before,
+blockquote::after {
+  position: absolute;
+  height  : 3rem;
+  font    : 6rem/100% Georgia, "Times New Roman", Times, serif;
+}
+
+blockquote::before {
+  content: '“';
+  top    : 0.3rem;
+  left   : 0.9rem;
+}
+
+blockquote::after {
+  content: '”';
+  bottom : 0.3rem;
+  right  : 0.8rem;
+}
+
+blockquote i {
+  display   : block;
+  font-size : 0.8em;
+  margin-top: 1rem;
+  text-style: italic;
+  text-align: right;
+}
+blockquote i>span {
+  float: left;
 }

@@ -1,11 +1,39 @@
 {% extends "layout.html" %}
 {% block body %}
     <div class="container">
+        <div class="form">
+            <form class="user_input" action="/" method="post">
+                <input id="food_name" type="text" name="food_name" required/>
+                <label>Food Name</label>
+                <input id="submit" type="submit" disabled>
+            </form>
+        </div>
         <div class="food-name">
             <h1>{{ food_name }}</h1>
         </div>
+        <div class="food_recipe">
+            <img src={{recipe.image}} >
+            <ul>
+                {% for each in recipe.extendedIngredients %}
+                    <li>{{each.measures.us.amount}} {{each.measures.us.unitShort}} {{each.name}}</li>
+                {% endfor %}
+            </ul>
+            <h4>Prep Time: {{recipe.prepTime}} mins</h4>
+            <a href="{{recipe.sourceUrl}}"><button formtarget="_blank">Source URL</button></a>
+        </div>
         <div class="tweet-section">
-            <p>{{tweet.text}}<span class="username">{{tweet.username}}<span class="date">{{tweet.created_at}}</span></span></p>
+            <blockquote>{{tweet['text']}}<i><span>{{tweet['user']['name']}}</span>{{tweet['created_at']}}</i></blockquote>
         </div>
     </div>
+    
+    <script>
+        document.querySelector("#food_name").onkeyup = function(){
+            if (document.querySelector("#food_name").value === ''){
+                document.querySelector("#submit").disabled = true;
+            }else{
+                document.querySelector("#submit").disabled = false;
+                document.querySelector("#submit").style.cursor = 'pointer';
+            }
+        }
+    </script>
 {% endblock %}
