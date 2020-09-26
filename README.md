@@ -13,7 +13,7 @@ All the requirements that needs to be installed has been added to the requiremen
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install packages assuming
-you have the lastest version of pip install that is pip3. If not then use pip instead.
+you have the lastest version of pip installed that is pip3. If not then use pip instead.
 
 ```bash
 pip3 install -r requirements.txt
