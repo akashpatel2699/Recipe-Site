@@ -13,6 +13,9 @@ from flask import Flask, render_template, request
 twitter_env = join(dirname(__file__),'twitter.env')
 load_dotenv(twitter_env)
 
+spoonacular_env = join(dirname(__file__),'spoonacular.env')
+load_dotenv(spoonacular_env)
+
 app=Flask(__name__)
 
 consumer_key=os.environ['consumer_key']
