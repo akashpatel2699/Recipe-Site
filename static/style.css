@@ -5,25 +5,87 @@ body {
     margin: 0;
 }
 .container {
-  display: flex;
+  display: grid;
   family-font: Georgia, serif;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto 1fr;
+  justify-content:center;
+  grid-template-areas:
+  "search search"
+  "food_name food_name"
+  "food_info tweet_section";
   height: 100vh;
   width: 100vw;
   background-color: #000000;
   overflow: hidden;
 }
+ul {
+  color: #ffffff;
+  font-size: 2rem;
+}
 .food-name {
-    color: #ffffff;
-    font-style: oblique;
-    font-size: 2rem;
+  grid-area: food_name;
+  color: #ffffff;
+  font-style: oblique;
+  font-size: 2rem;
+}
+
+.form {
+  grid-area: search;
+	position:relative;
+	margin:25px 0;
+}
+.food_recipe {
+  grid-area: food_info;
+  display: flex;
+  color: #ffffff;
+}
+
+.user_input label{
+	position:absolute;
+	top:0px;
+	left:0px;
+	font-size:2rem;
+	color:#fff;	
+  pointer-event:none;
+	transition: all 0.5s ease-in-out;
+}
+.user_input input{ 
+  border:0;
+  border-bottom:1px solid #555;  
+  background:transparent;
+  width:100%;
+  padding:8px 0 5px 0;
+  font-size:16px;
+  color:#fff;
+}
+.user_input input:focus{ 
+ border:none;	
+ outline:none;
+ border-bottom:1px solid #e74c3c;	
+}
+.user_input input[type="submit"]{
+	color:#fff;
+	background-color:#e74c3c;
+	outline: none;
+  border: 0;
+  color: #fff;
+	padding:10px 20px;
+	text-transform:uppercase;
+	margin-top:50px;
+	border-radius:2px;
+	/*cursor:pointer;*/
+	position:relative;
+}
+.user_input input:focus ~ label,
+.user_input input:valid ~ label{
+	top:-12px;
+	font-size:12px;	
 }
   
 .tweet-section {
-  box-shadow: 5px 10px #888888;
-  max-width: 40%;
+  grid-area: tweet_section;
+  width: 100%;
   height: auto;
   min-width: 40px;
 }
