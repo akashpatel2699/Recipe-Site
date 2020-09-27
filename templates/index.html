@@ -2,24 +2,28 @@
 {% block body %}
     <div class="container">
         <div class="form">
-            <form class="user_input" action="/" method="post">
+            <form class="user-input" action="/" method="post">
                 <input id="food_name" type="text" name="food_name" required/>
                 <label>Food Name</label>
                 <input id="submit" type="submit" disabled>
             </form>
         </div>
-        <div class="food-name">
+        <div class="food-name-display">
             <h1>{{ food_name }}</h1>
         </div>
-        <div class="food_recipe">
-            <img src={{recipe.image}} >
+        <div class="food-recipe">
             <ul>
                 {% for each in recipe.extendedIngredients %}
                     <li>{{each.measures.us.amount}} {{each.measures.us.unitShort}} {{each.name}}</li>
                 {% endfor %}
             </ul>
-            <h4>Prep Time: {{recipe.prepTime}} mins</h4>
-            <a href="{{recipe.sourceUrl}}"><button formtarget="_blank">Source URL</button></a>
+        </div>
+        <div class="preptime-sourceurl">
+            <h3>Prep Time: {{recipe.prepTime}} mins</h3>
+            <a href="{{recipe.sourceUrl}}" target="_blank">Source URL</a>
+        </div>
+        <div class="food-image">
+            <img src={{recipe.image}} >
         </div>
         <div class="tweet-section">
             <blockquote>{{tweet['text']}}<i><span>{{tweet['user']['name']}}</span>{{tweet['created_at']}}</i></blockquote>
