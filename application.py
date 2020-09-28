@@ -27,8 +27,8 @@ key_secret = '{}:{}'.format(consumer_key, consumer_secret).encode('ascii')
 b64_encoded_key = base64.b64encode(key_secret)
 b64_encoded_key = b64_encoded_key.decode('ascii')
 
-base_url = 'https://api.twitter.com/'
-auth_url = '{}oauth2/token'.format(base_url)
+twitter_base_url = 'https://api.twitter.com/'
+twitter_auth_url = '{}oauth2/token'.format(twitter_base_url)
 
 auth_headers = {
     'Authorization': 'Basic {}'.format(b64_encoded_key),
@@ -39,7 +39,7 @@ auth_data = {
     'grant_type': 'client_credentials'
 }
 # POST request to obtain Bearer Token (acces key)
-auth_resp = requests.post(auth_url, headers=auth_headers, data=auth_data)
+auth_resp = requests.post(twitter_auth_url, headers=auth_headers, data=auth_data)
 
 access_token = auth_resp.json()['access_token']
 
@@ -55,8 +55,6 @@ food_items = [
 
 def twitter_search_request(querry):
     COUNT = 20
-    random_food_index = random.randint(0,len(food_items)-1)
-    random_tweet_index = random.randint(0,COUNT-1)
     #Search Query to be send to fetch some data from Twitter API endpoint
     search_headers = {
         'Authorization': 'Bearer {}'.format(access_token)    
@@ -66,25 +64,29 @@ def twitter_search_request(querry):
         'q': '{}'.format(querry),
         'result_type': 'recent',
         'lang': 'en',
+        'tweet_mode': 'extended',
         'count': COUNT
     }
     
-    search_url = '{}1.1/search/tweets.json'.format(base_url)
+    search_url = '{}1.1/search/tweets.json'.format(twitter_base_url)
     
     search_resp = requests.get(search_url, headers=search_headers, params=search_params)
     
     tweet_data = search_resp.json()
     
-    for status in tweet_data['statuses']:
-        if (random_tweet_index) == random_food_index:
-            tweet = status
-            break
-        elif random_tweet_index < random_food_index:
-            random_tweet_index += 1
-        else:
-            random_tweet_index -= 1
+    #select random tweet from fetched tweets
+    tweet = random.choice(tweet_data['statuses'])
+    try:
+        # if the tweet is a retweet then I want the full text if availabe
+        tweet['full_text'] = tweet['retweeted_status']['full_text']
+    except KeyError:
+        # if the tweet is not a retweet then just full text
+        tweet['full_text'] = tweet['full_text']
+   
+    #format datetime to remove +000 from it
     tweet['created_at'] = strftime("%a, %d %b %H:%M:%S %Y",strptime(tweet['created_at'],"%a %b %d %H:%M:%S +0000 %Y"))
-    return tweet
+
+    return {'text':tweet['full_text'],'username':tweet['user']['name'],'created_at':tweet['created_at']}
 
 def spooncular_request_recipe_id(id):
     base_url="https://api.spoonacular.com/recipes/{}/information".format(id)
@@ -93,8 +95,8 @@ def spooncular_request_recipe_id(id):
         'includeNutritio': False
     }
     search_result = requests.get(base_url,params=payload)
-    recipes = search_result.json()
-    return recipes
+    result = search_result.json()
+    return {'image':result['image'],'sourceUrl':result['sourceUrl'],'prepTime':result['readyInMinutes'],'extendedIngredients':result['extendedIngredients']}
     
 def spooncular_recipe_request(query):
     # base_url="https://api.spoonacular.com/recipes/complexSearch"
