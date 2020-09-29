@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block head %}
+    <title>Recipe Not Found</title>
+    <link rel="stylesheet" href={{ url_for('static', filename='style.css') }} />
+{% endblock %}
+{% block body %}
+    <div class="back-button">
+        <a href="/">Back</a>
+        <h1 style="text-align:center;font-size: 3rem;font-weight:bold;">Recipe for {{ query.query }} not found.</h1>
+    </div>
+{% endblock %}

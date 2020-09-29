@@ -126,7 +126,7 @@ body {
   align-items: center;
 }
 
-.preptime-sourceurl a {
+.preptime-sourceurl,.take-home a {
   background-color: red;
   box-shadow: 0 5px 0 darkred;
   color: white;
@@ -137,11 +137,11 @@ body {
   text-transform: uppercase;
 }
 
-.preptime-sourceurl a:hover {
+.preptime-sourceurl,.take-home a:hover {
   background-color: #ce0606;
 }
 
-.preptime-sourceurl a:active {
+.preptime-sourceurl,.take-home a:active {
   box-shadow: none;
   top: 5px;
 }
@@ -195,4 +195,8 @@ blockquote i {
 }
 blockquote i>span {
   float: left;
+}
+
+.back-button{
+  background-color: red;
 }
