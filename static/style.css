@@ -17,7 +17,7 @@ body {
   height: 100vh;
   width: 100vw;
   background-color: #000000;
-  overflow: hidden;
+  overflow: scroll;
 }
 
 .form {
@@ -77,6 +77,9 @@ body {
   justify-self: center;
   align-self: center;
 }
+.food-name-display span {
+  margin: 0 2rem;
+}
 
 .food-recipe {
   grid-area: food_info;
@@ -119,6 +122,7 @@ body {
 }
 
 .preptime-sourceurl {
+  margin-top: 2rem;
   grid-area: preptime;
   color: #ffffff;
   display: flex;
@@ -126,7 +130,7 @@ body {
   align-items: center;
 }
 
-.preptime-sourceurl,.take-home a {
+.preptime-sourceurl a {
   background-color: red;
   box-shadow: 0 5px 0 darkred;
   color: white;
@@ -137,11 +141,11 @@ body {
   text-transform: uppercase;
 }
 
-.preptime-sourceurl,.take-home a:hover {
+.preptime-sourceurl a:hover {
   background-color: #ce0606;
 }
 
-.preptime-sourceurl,.take-home a:active {
+.preptime-sourceurl a:active {
   box-shadow: none;
   top: 5px;
 }
@@ -150,6 +154,7 @@ body {
   grid-area: food_image;
   justify-self: center;
   align-self: center;
+  object-fit: cover;
 }
   
 .tweet-section {
@@ -161,7 +166,6 @@ body {
 blockquote {
   min-height: 5em;
   padding   : 1em 4em;
-  /*margin    : 0;*/
   font      : 1em/150% sans-serif;
   position  : relative;
   background-color: lightgoldenrodyellow;
@@ -197,6 +201,59 @@ blockquote i>span {
   float: left;
 }
 
-.back-button{
-  background-color: red;
+.ui-menu {
+  background-color: #ffffff;
+  list-style: none;
+  list-style-type: none;
+  padding: 0px;
+  margin: 0px;
+  width: 20%;
+  max-height:300px;
+  cursor: pointer;
+  overflow: scroll;
+}
+.ui-menu-item {
+  background-color: #ff0000;
+  color: #ffffff;
+  font-size:2rem;
+}
+.ui-menu-item:hover {
+  background-color: #000000;
+}
+
+/*hide jquery user accessible message*/
+.ui-helper-hidden-accessible { position: absolute; left:-999em; }
+
+
+@media only screen and (max-width: 950px) {
+  .container {
+    display: grid;
+    grid-template-areas:
+    "search"
+    "food_name"
+    "food_image"
+    "food_info"
+    "preptime"
+    "tweet_section";
+    height: 100%;
+    width: 100%;
+    background-color: #000000;
+  }
+  .food-recipe {
+    grid-area: food_info;
+    color: #ffffff;
+    justify-self: center;
+    align-self: center;
+    overflow-y:none;
+  }
+  .food-recipe ul {
+  color: #ffffff;
+  font-size: 1rem;
+  columns: 1;
+  -webkit-columns: 1;
+  -moz-columns: 1;
+  }
+  .food-name-display, .search-query {
+    display: block;
+  }
 }

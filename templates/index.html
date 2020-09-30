@@ -6,13 +6,13 @@
     <div class="container">
         <div class="form">
             <form class="user-input" action="/" method="post">
-                <input id="food_name" type="text" name="food_name" required/>
+                <input id="food_name" type="text" name="food_name" autocomplete="off" required/>
                 <label>Food Name</label>
                 <input id="submit" type="submit" disabled>
             </form>
         </div>
         <div class="food-name-display">
-            <h1>{{ food_name }}</h1>
+            <h3><span class="search-query">Query => {{ food_name }}<span class="return-result">Result => {{recipe.title}}</span></span></h3>
         </div>
         <div class="food-recipe">
             <ul>
@@ -22,7 +22,7 @@
             </ul>
         </div>
         <div class="preptime-sourceurl">
-            <h3>Prep Time: {{recipe.prepTime}} mins</h3>
+            <h3>Prep Time: <span class="count">{{recipe.prepTime}}</span> mins</h3>
             <a href="{{recipe.sourceUrl}}" target="_blank">Source URL</a>
         </div>
         <div class="food-image">
@@ -33,17 +33,5 @@
         </div>
     </div>
     
-    <script>
-        if ( window.history.replaceState ) {
-            window.history.replaceState( null, null, window.location.href );
-        }
-        document.querySelector("#food_name").onkeyup = function(){
-            if (document.querySelector("#food_name").value === ''){
-                document.querySelector("#submit").disabled = true;
-            }else{
-                document.querySelector("#submit").disabled = false;
-                document.querySelector("#submit").style.cursor = 'pointer';
-            }
-        }
-    </script>
+    <script src={{ url_for('static', filename='script.js') }}></script>
 {% endblock %}
