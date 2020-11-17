@@ -21,48 +21,37 @@ app=Flask(__name__)
 consumer_key=os.environ['consumer_key']
 consumer_secret=os.environ['consumer_secret']
 spoonacular_api_key=os.environ['spoonacular_api_key']
-
-# base64 Encoding of two key into one for Twitter API Authentication
-key_secret = '{}:{}'.format(consumer_key, consumer_secret).encode('ascii')
-b64_encoded_key = base64.b64encode(key_secret)
-b64_encoded_key = b64_encoded_key.decode('ascii')
-
 twitter_base_url = 'https://api.twitter.com/'
-twitter_auth_url = '{}oauth2/token'.format(twitter_base_url)
+KEY_FOOD_NAMES_ID_FILE = "food_names_with_id.txt"
+KEY_FOOD_NAMES_HARDCODED_LIST = "food_list_hardcoded.txt"
 
-auth_headers = {
-    'Authorization': 'Basic {}'.format(b64_encoded_key),
-    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-}
-
-auth_data = {
-    'grant_type': 'client_credentials'
-}
-# POST request to obtain Bearer Token (acces key)
-auth_resp = requests.post(twitter_auth_url, headers=auth_headers, data=auth_data)
-
-access_token = auth_resp.json()['access_token']
-# Hard coded list when first page load or without user input
-food_items = [
-    "Pasta",
-    "Pizza",
-    "Samosa",
-    "Biryani",
-    "Pani Puri",
-    "Falafal",
-    "Sandwich",
-    "Dosa"
-    ]
-# store food id and title after getting autocomplete result back from 
-# spoonacular API
-food_items_id = {}
-
+def twitter_authentication():
+    # base64 Encoding of two key into one for Twitter API Authentication
+    key_secret = '{}:{}'.format(consumer_key, consumer_secret).encode('ascii')
+    b64_encoded_key = base64.b64encode(key_secret)
+    b64_encoded_key = b64_encoded_key.decode('ascii')
+    
+    twitter_auth_url = '{}oauth2/token'.format(twitter_base_url)
+    
+    auth_headers = {
+        'Authorization': 'Basic {}'.format(b64_encoded_key),
+        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+    }
+    
+    auth_data = {
+        'grant_type': 'client_credentials'
+    }
+    # POST request to obtain Bearer Token (access key)
+    auth_resp = requests.post(twitter_auth_url, headers=auth_headers, data=auth_data)
+    
+    return auth_resp.json()['access_token']
+    
 def twitter_search_request(querry):
     COUNT = 20
 
     #Search Query to be send to fetch some data from Twitter API endpoint
     search_headers = {
-        'Authorization': 'Bearer {}'.format(access_token)    
+        'Authorization': 'Bearer {}'.format(twitter_authentication())    
     }
     #Options for search parameters 
     search_params = {
@@ -78,20 +67,22 @@ def twitter_search_request(querry):
     search_resp = requests.get(search_url, headers=search_headers, params=search_params)
     
     tweet_data = search_resp.json()
-    
     #select random tweet from fetched tweets
-    tweet = random.choice(tweet_data['statuses'])
     try:
-        # if the tweet is a retweet then I want the full text if availabe
-        tweet['full_text'] = tweet['retweeted_status']['full_text']
-    except KeyError:
-        # if the tweet is not a retweet then just full text
-        tweet['full_text'] = tweet['full_text']
-   
-    #format datetime to remove +000 from it
-    tweet['created_at'] = strftime("%a, %d %b %H:%M:%S %Y",strptime(tweet['created_at'],"%a %b %d %H:%M:%S +0000 %Y"))
-
-    return {'text':tweet['full_text'],'username':tweet['user']['name'],'created_at':tweet['created_at']}
+        tweet = random.choice(tweet_data['statuses'])
+        try:    
+            # if the tweet is a retweet then I want the full text if availabe
+            tweet['full_text'] = tweet['retweeted_status']['full_text']
+        except KeyError:
+            # if the tweet is not a retweet then just full text
+            tweet['full_text'] = tweet['full_text']
+        
+        #format datetime to remove +000 from it
+        tweet['created_at'] = strftime("%a, %d %b %H:%M:%S %Y",strptime(tweet['created_at'],"%a %b %d %H:%M:%S +0000 %Y"))
+    
+        return {'text':tweet['full_text'],'username':tweet['user']['name'],'created_at':tweet['created_at']}
+    except: 
+        twitter_search_request("best food")
 
 def spooncular_name_autocomplete(substring):
     base_url="https://api.spoonacular.com/recipes/autocomplete"
@@ -115,7 +106,12 @@ def spooncular_request_recipe_id(id):
     }
     search_result = requests.get(base_url,params=payload)
     result = search_result.json()
-    return {'title':result['title'],'image':result['image'],'sourceUrl':result['sourceUrl'],'prepTime':result['readyInMinutes'],'extendedIngredients':result['extendedIngredients']}
+    return {'title':result['title'],
+        'image':result['image'],
+        'sourceUrl':result['sourceUrl'],
+        'prepTime':result['readyInMinutes'],
+        'extendedIngredients':result['extendedIngredients']
+    }
     
 def spooncular_recipe_request(query):
     base_url="https://api.spoonacular.com/recipes/complexSearch"
@@ -137,7 +133,11 @@ def spooncular_recipe_request(query):
 def index():
     if request.method == "POST":
         food_id = ''
+        food_names_id = {}
         food_name=request.form.get("food_name")
+        # TODO need food id if in food_names_id
+        with open(KEY_FOOD_NAMES_ID_FILE,"r") as fin:
+            food_items_id = eval(fin.read())
         for id, title in food_items_id.items():
             if (title == food_name):
                 food_id = id
@@ -150,6 +150,8 @@ def index():
             return render_template("recipe_not_found.html",query=recipe)
         return render_template("index.html",food_name=food_name,tweet=tweet,recipe=recipe)
     else:
+        with open(KEY_FOOD_NAMES_HARDCODED_LIST,"r") as fin:
+            food_items = eval(fin.read())
         food_name = food_items[random.randint(0,len(food_items)-1)]
         tweet = twitter_search_request(food_name)
         recipe = spooncular_recipe_request(food_name)
@@ -166,6 +168,8 @@ def send_food_list():
     for each in food_names:
         food_items_id[str(each['id'])] = each['title']
         response.append(each['title'])
+    with open(KEY_FOOD_NAMES_ID_FILE,"w") as fin:
+        fin.write(str(food_items_id))
     return jsonify(response=response)
     
 if __name__ == "__main__":

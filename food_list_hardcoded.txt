@@ -1,0 +1,10 @@
+ [
+    "Pasta",
+    "Pizza",
+    "Samosa",
+    "Biryani",
+    "Pani Puri",
+    "Falafal",
+    "Sandwich",
+    "Dosa"
+    ]
